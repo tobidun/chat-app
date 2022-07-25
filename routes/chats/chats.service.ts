@@ -29,8 +29,8 @@ class ChatService {
         const { _id, __v, ...others } = item.toObject();
         return others;
       });
-    } catch (e) {
-      throw e;
+    } catch (err) {
+      throw err;
     }
   }
 
