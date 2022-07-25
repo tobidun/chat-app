@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { secretKey } from "../../middlewares/token";
+import { secretKey, secretKeyForRefreshToken } from "../../middlewares/token";
 import { ILoginDetails, IUser, UserModel } from "./users.model";
 
 class UserService {
@@ -33,7 +33,17 @@ class UserService {
         const accessToken = jwt.sign({ user: profile._id }, secretKey, {
           expiresIn: "1d",
         });
-        return { success: true, accessToken: accessToken };
+        const refreshToken = jwt.sign(
+          { user: profile._id },
+          secretKeyForRefreshToken,
+          { expiresIn: "7d" }
+        );
+        const response = {
+          status: "Logged in",
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        };
+        return response;
       }
     } catch (e) {
       throw e;

@@ -15,7 +15,7 @@ UserRouter.post("/signup", async (req, res, next) => {
 UserRouter.post("/login", async (req, res, next) => {
   try {
     const result = await userService.login(req.body);
-    res.send(result);
+    res.send({ success: true, result });
   } catch (e) {
     throw e;
   }

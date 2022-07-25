@@ -18,6 +18,7 @@ config();
 var app = express();
 
 const MONGODB_URI = "mongodb://localhost:27017/chat-app";
+console.log(MONGODB_URI);
 
 connect(MONGODB_URI);
 
