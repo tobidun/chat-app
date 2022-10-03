@@ -49,6 +49,19 @@ class UserService {
       throw e;
     }
   }
+
+  async resetUserPassword(email: IUser, body: IUser) {
+    try {
+      const is_user = await UserModel.findOne({ email: email });
+      if (!is_user) throw new Error("Email does not exist");
+      const user = await UserModel.findByIdAndUpdate({ email: email }, body, {
+        new: true,
+      });
+      return user;
+    } catch (e) {
+      throw e;
+    }
+  }
 }
 
 export const userService = new UserService();
