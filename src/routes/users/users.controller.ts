@@ -1,5 +1,5 @@
 import express from "express";
-import { token } from "../../middlewares/token";
+import { token } from "../../../middlewares/token";
 import { userService } from "./users.service";
 
 export const UserRouter = express.Router();
@@ -18,7 +18,7 @@ UserRouter.post("/login", async (req, res, next) => {
     const result = await userService.login(req.body);
     res.send({ success: true, result });
   } catch (e) {
-    throw e;
+    next(e);
   }
 });
 

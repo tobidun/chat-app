@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { secretKey, secretKeyForRefreshToken } from "../../middlewares/token";
+import { token } from "../../../middlewares/token";
 import { ILoginDetails, IUser, UserModel } from "./users.model";
 
 class UserService {
@@ -13,9 +12,7 @@ class UserService {
       const salt = await bcrypt.genSalt(10);
       body.password = await bcrypt.hash(body.password, salt);
       const user = await UserModel.create({ ...body });
-      const accessToken = jwt.sign({ user: user.id }, secretKey, {
-        expiresIn: "1d",
-      });
+      const accessToken = await token.generateAccessToken(user._id);
       return { success: true, accessToken: accessToken };
     } catch (e) {
       throw e;
@@ -30,20 +27,8 @@ class UserService {
       else {
         const compared = await bcrypt.compare(body.password, profile.password);
         if (!compared) throw new Error("Invalid Credentials");
-        const accessToken = jwt.sign({ user: profile._id }, secretKey, {
-          expiresIn: "1d",
-        });
-        const refreshToken = jwt.sign(
-          { user: profile._id },
-          secretKeyForRefreshToken,
-          { expiresIn: "7d" }
-        );
-        const response = {
-          status: "Logged in",
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        };
-        return response;
+        const accessToken = await token.generateAccessToken(profile._id);
+        return { accessToken };
       }
     } catch (e) {
       throw e;
