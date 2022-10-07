@@ -1,5 +1,5 @@
 import express from "express";
-import { token } from "../../middlewares/token";
+import { token } from "../../../middlewares/token";
 import { chatService } from "./chats.service";
 
 export const ChatRouter = express.Router();

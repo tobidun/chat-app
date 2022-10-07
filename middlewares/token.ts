@@ -1,18 +1,24 @@
 import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
-import { UserModel } from "../routes/users/users.model";
+import { UserModel } from "../src/routes/users/users.model";
 
-export const secretKey = process.env.JWT_SECRET || "secretishere";
-export const secretKeyForRefreshToken =
-  process.env.JWT_REFRESH_TOKEN || "secretforrefreshishere";
+const secretKey = process.env.JWT_SECRET || "secretishere";
 class Token {
+  async generateAccessToken(userId: string) {
+    try {
+      return jwt.sign({ userId }, secretKey, { expiresIn: "1d" });
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async decodeAccessToken(req: any, res: Response, next: NextFunction) {
     try {
       const token = req.headers.authorization as string;
       if (!token) throw new Error("Unauthorized user");
-      let decodedToken = jwt.verify(token.split(" ")[1], secretKey) as any;
-      const { user } = decodedToken;
-      const newUser = await UserModel.findById(user);
+      const decodedToken = jwt.verify(token.split(" ")[1], secretKey) as any;
+      const { userId } = decodedToken;
+      const newUser = await UserModel.findById(userId);
       if (!newUser) {
         throw new Error("User not found!");
       }
